@@ -1,0 +1,24 @@
+- Fireflies 1500
+
+- Light fireflies random
+
+- Cycle of flash = 10
+
+- Duration of flash = 1
+
+- Flashes to reset = 1
+
+- Strategy  = "delay"
+
+-
+
+-
+
+-
+
+-IMPORTANT LINKS:
+Model:  http://ccl.northwestern.edu/netlogo/models/Fireflies
+
+http://www.ai.rug.nl/~elskevdv/Personal/CV_files/SampleSlidesEvdVSOCSS.pdf
+https://github.com/cooo/LuaBoulderdash/blob/master/objects/firefly.lua
+http://turing.iimas.unam.mx/CA/sites/default/files/files/ARC_Fireflies.nlogo
