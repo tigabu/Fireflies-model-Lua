@@ -27,12 +27,12 @@ rand = Random{seed=SEED}  --
 -------------
 
 world = CellularSpace{
-	xdim = 30,
-	ydim = 30
+	xdim = 150,
+	ydim = 100
 }
 
 world:createNeighborhood{
-	strategy = "3x3",
+	strategy = "delay",
 	self = false
 }
 
