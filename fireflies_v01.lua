@@ -10,13 +10,15 @@ FIREFLIES = 1
 LIGHTED = 2
 --OFF = 3
 EMPTY = 4
+--flashCicle=10
 
 nFIREFLIES=0
 nLIGHTED=0
 --nOFF=0
 nEMPTY=0
 SEED=8
-rand = Random{seed=SEED}  --
+rand = Random{seed=SEED} 
+flashCicle = random:integer(10) -- from 0 to 10 -----------------------  do we need to assign this to each cell???????????
 
 --------------------------------------------------------------
 -- MODEL (1. space, 2. behavior, and 3. time)
@@ -27,32 +29,28 @@ rand = Random{seed=SEED}  --
 -------------
 
 world = CellularSpace{
-	xdim = 150,
-	ydim = 100
+	xdim = 50,--150
+	ydim = 50  --100
 }
 
 world:createNeighborhood{
-	strategy = "delay",
+	strategy = "moore",
 	self = false
 }
 
 forEachCell(world, function(cell)
-	if rand:number() > 0.6 then  --  0.2  0.25  0.3  0.35  0.5
+	if rand:number() > 0.6 then  --  0.2  0.25  0.3  0.35  0.5 
 		cell.cover = FIREFLIES
 		nFIREFLIES = nFIREFLIES+1
-	else
+	elseif rand:number() > 0.7 then  --this will give us 0.3 of the space with empty cells
 		cell.cover = EMPTY
 		nEMPTY = nEMPTY+1
+	else
+		cell.cover = LIGHTED  --this will give us the remainder between 0.6 and 0.7 = 0.1 of lighted fireflies making it random
+		nLIGHTED = nLIGHTED+1
 	end
 end)
 
---forEachCell(world, function(cell)
---	if rand1:number() > 0.4 then 
---		cell.prob = true
---	else
---		cell.prob = false
---	end
---end)
 ----------------
 --# BEHAVIOR #
 ----------------
@@ -64,26 +62,29 @@ update = function(cs)
 	forEachCell(cs, function(cell)
 		if cell.past.cover == FIREFLIES then
 			isLIGHTED=false
-			forEachNeighbor(cell, function(cell, neighbor)
-				if neighbor.past.cover == LIGHTED then
+				flashCicle=flashCicle-1 ---i think that here it will reduce one to the random variable flashCicle
+				if flashCicle==0 then  --- and when it is equal to 0 they should flash 
 					cell.cover = LIGHTED
 					isLIGHTED=true
+				else
+					cell.cover = FIREFLIES----else they should stay as fireflies
 				end
-			end)
+--			forEachNeighbor(cell, function(cell, neighbor)
+--				if neighbor.past.cover == LIGHTED then
+--					cell.cover = LIGHTED
+--					isLIGHTED=true
+--				end
+--			end)
 			if isLIGHTED==true then
 				nFIREFLIES=nFIREFLIES-1
 				nLIGHTED=nLIGHTED+1
 			end
 		elseif cell.past.cover == LIGHTED then
-			--cell.cover = BURNING2
-			
-		--elseif cell.past.cover == BURNING2 then
 			cell.cover = FIREFLIES
 			nLIGHTED =nLIGHTED-1
 			nFIREFLIES=nFIREFLIES+1
 		end
 	end)
-	--print ( nforest, nburning, nburned) --divide it by 4 /4
 end
 
 -----------
@@ -108,8 +109,6 @@ legend = Legend {
 	colorBar = {
 		{value = FIREFLIES, text="fireflies", color = "white"},
 		{value = LIGHTED, text="lighted", color = "yellow"},
-		--{value = BURNING2, color = "yellow"},
-		--{value = BURNED, color = "brown"},
 		{value = EMPTY, text="empty", color = "black"}
 	}
 }
@@ -120,7 +119,7 @@ Observer{
 	legends = {legend}
 }
 
---world:notify()  -- needed just if you want to see the initial state (before simulation runs)
+world:notify()  -- needed just if you want to see the initial state (before simulation runs)
 
 t:execute(20) --100
 
